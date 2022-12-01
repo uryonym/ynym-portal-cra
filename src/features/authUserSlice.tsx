@@ -1,6 +1,7 @@
-import { createAsyncThunk } from '@reduxjs/toolkit'
-import { getRedirectResult, GoogleAuthProvider, signInWithRedirect, User } from 'firebase/auth'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { getRedirectResult, GoogleAuthProvider, signInWithRedirect, signOut, User } from 'firebase/auth'
 import { firebaseAuth } from '../app/firebase'
+import { RootState } from '../app/store'
 
 export interface AuthUserState {
   user: User | null
@@ -14,21 +15,74 @@ const initialState: AuthUserState = {
 
 const provider = new GoogleAuthProvider()
 
-export const signIn = createAsyncThunk('authUser/signIn', async (user: User, thunkAPI) => {
-  try {
-    if (user === null) {
-      await signInWithRedirect(firebaseAuth, provider)
-      const result = await getRedirectResult(firebaseAuth)
-      if (result) {
-        return result.user
+export const login = createAsyncThunk<User | null, User, { rejectValue: string }>(
+  'authUser/signIn',
+  async (user, { rejectWithValue }) => {
+    try {
+      if (user === null) {
+        await signInWithRedirect(firebaseAuth, provider)
+        const result = await getRedirectResult(firebaseAuth)
+        if (result) {
+          return result.user
+        }
+        return null
+      } else {
+        return user
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message)
       }
       return null
-    } else {
-      return user
-    }
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      return thunkAPI.rejectWithValue({ error: error.message })
     }
   }
+)
+
+export const logout = createAsyncThunk<void, undefined, { rejectValue: string }>(
+  'authUser/signOut',
+  async (_, { rejectWithValue }) => {
+    try {
+      await signOut(firebaseAuth)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message)
+      }
+    }
+  }
+)
+
+export const authUserSlice = createSlice({
+  name: 'authUser',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(login.pending, (state) => {
+      state.status = 'loading'
+    })
+    builder.addCase(login.fulfilled, (state, action) => {
+      state.user = action.payload
+      state.status = 'idle'
+    })
+    builder.addCase(login.rejected, (state, action) => {
+      state.user = null
+      state.status = 'failed'
+      console.log(action.error)
+    })
+    builder.addCase(logout.pending, (state) => {
+      state.status = 'loading'
+    })
+    builder.addCase(logout.fulfilled, (state) => {
+      state.user = null
+      state.status = 'idle'
+    })
+    builder.addCase(logout.rejected, (state, action) => {
+      state.user = null
+      state.status = 'failed'
+      console.log(action.error)
+    })
+  },
 })
+
+export const selectAuthUser = (state: RootState) => state.authUser
+
+export default authUserSlice.reducer
