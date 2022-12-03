@@ -13,11 +13,19 @@ import {
   Toolbar,
 } from '@mui/material'
 import { FC, useState } from 'react'
+import { useAppDispatch } from '../app/hooks'
+import { logout } from '../features/authUserSlice'
 import SpaceBox from './SpaceBox'
 import './BottomAppBar.scss'
 
 const MenuButton: FC = () => {
+  const dispatch = useAppDispatch()
+
   const [isOpen, setIsOpen] = useState(false)
+
+  const handleClickSignOut = () => {
+    dispatch(logout())
+  }
 
   return (
     <>
@@ -46,7 +54,7 @@ const MenuButton: FC = () => {
           <Divider />
           <List>
             <ListItem>
-              <ListItemButton>
+              <ListItemButton onClick={handleClickSignOut}>
                 <ListItemText primary='LogOut' />
               </ListItemButton>
             </ListItem>

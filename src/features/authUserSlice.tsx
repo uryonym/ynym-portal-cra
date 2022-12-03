@@ -4,31 +4,34 @@ import { firebaseAuth } from '../app/firebase'
 import { RootState } from '../app/store'
 
 export interface AuthUserState {
+  isInitialized: boolean
+  isAuthenticated: boolean
   user: User | null
   status: 'idle' | 'loading' | 'failed'
 }
 
 const initialState: AuthUserState = {
+  isInitialized: false,
+  isAuthenticated: false,
   user: null,
   status: 'idle',
 }
 
 const provider = new GoogleAuthProvider()
 
-export const login = createAsyncThunk<User | null, User, { rejectValue: string }>(
+export const login = createAsyncThunk<User | null, User | undefined, { rejectValue: string }>(
   'authUser/signIn',
   async (user, { rejectWithValue }) => {
     try {
-      if (user === null) {
+      if (!user) {
         await signInWithRedirect(firebaseAuth, provider)
         const result = await getRedirectResult(firebaseAuth)
         if (result) {
           return result.user
         }
         return null
-      } else {
-        return user
       }
+      return user
     } catch (error: unknown) {
       if (error instanceof Error) {
         return rejectWithValue(error.message)
@@ -60,6 +63,8 @@ export const authUserSlice = createSlice({
       state.status = 'loading'
     })
     builder.addCase(login.fulfilled, (state, action) => {
+      state.isInitialized = true
+      state.isAuthenticated = true
       state.user = action.payload
       state.status = 'idle'
     })
@@ -72,6 +77,8 @@ export const authUserSlice = createSlice({
       state.status = 'loading'
     })
     builder.addCase(logout.fulfilled, (state) => {
+      state.isInitialized = true
+      state.isAuthenticated = false
       state.user = null
       state.status = 'idle'
     })

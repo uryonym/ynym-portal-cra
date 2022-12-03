@@ -5,6 +5,11 @@ export const store = configureStore({
   reducer: {
     authUser: authUserReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+      immutableCheck: false,
+    }),
 })
 
 export type AppDispatch = typeof store.dispatch
