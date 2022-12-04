@@ -1,9 +1,11 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 import authUserReducer from '../features/authUserSlice'
+import taskReducer from '../features/taskSlice'
 
 export const store = configureStore({
   reducer: {
     authUser: authUserReducer,
+    task: taskReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
