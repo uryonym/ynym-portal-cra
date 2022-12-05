@@ -1,16 +1,29 @@
 import { onAuthStateChanged, User } from 'firebase/auth'
 import { FC, useCallback, useEffect } from 'react'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { firebaseAuth } from './app/firebase'
 import { useAppDispatch, useAppSelector } from './app/hooks'
 import { login, logout, selectAuthUser } from './features/authUserSlice'
 import HomeScreen from './screens/HomeScreen'
 import LoadingScreen from './screens/LoadingScreen'
 import LoginScreen from './screens/LoginScreen'
+import TaskScreen from './screens/TaskScreen'
 import './App.css'
 
 const App: FC = () => {
   const { isInitialized, isAuthenticated } = useAppSelector(selectAuthUser)
   const dispatch = useAppDispatch()
+
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <HomeScreen />,
+    },
+    {
+      path: 'task',
+      element: <TaskScreen />,
+    },
+  ])
 
   const refresh = useCallback(
     async (user: User) => {
@@ -33,9 +46,6 @@ const App: FC = () => {
     f()
   }, [])
 
-  console.log(`isInitialized: ${isInitialized}`)
-  console.log(`isAuthenticated: ${isAuthenticated}`)
-
   if (!isInitialized) {
     return <LoadingScreen />
   }
@@ -44,7 +54,7 @@ const App: FC = () => {
     return <LoginScreen />
   }
 
-  return <HomeScreen />
+  return <RouterProvider router={router} />
 }
 
 export default App

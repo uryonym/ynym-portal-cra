@@ -13,6 +13,7 @@ import {
   Toolbar,
 } from '@mui/material'
 import { FC, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../app/hooks'
 import { logout } from '../features/authUserSlice'
 import SpaceBox from './SpaceBox'
@@ -36,12 +37,12 @@ const MenuButton: FC = () => {
         <Box>
           <List>
             <ListItem>
-              <ListItemButton>
+              <ListItemButton component={Link} to='/'>
                 <ListItemText primary='Home' />
               </ListItemButton>
             </ListItem>
             <ListItem>
-              <ListItemButton>
+              <ListItemButton component={Link} to='task'>
                 <ListItemText primary='Task' />
               </ListItemButton>
             </ListItem>
