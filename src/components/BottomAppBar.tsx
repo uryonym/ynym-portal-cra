@@ -19,6 +19,10 @@ import { logout } from '../features/authUserSlice'
 import SpaceBox from './SpaceBox'
 import './BottomAppBar.scss'
 
+type BottomAppBarProps = {
+  onAddItem?: () => void
+}
+
 const MenuButton: FC = () => {
   const dispatch = useAppDispatch()
 
@@ -66,20 +70,14 @@ const MenuButton: FC = () => {
   )
 }
 
-const AddFab: FC = () => {
-  return (
-    <Fab className='add-fab' color='secondary'>
-      <Add />
-    </Fab>
-  )
-}
-
-const BottomAppBar: FC = () => {
+const BottomAppBar: FC<BottomAppBarProps> = ({ onAddItem }) => {
   return (
     <AppBar className='bottom-app-bar' position='fixed'>
       <Toolbar>
         <MenuButton />
-        <AddFab />
+        <Fab className='add-fab' color='secondary' onClick={onAddItem}>
+          <Add />
+        </Fab>
         <SpaceBox />
       </Toolbar>
     </AppBar>

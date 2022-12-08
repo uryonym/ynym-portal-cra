@@ -20,6 +20,19 @@ export const getTaskListsApi = async () => {
   return axios.get(`${apiUrl}/task_lists`, config).then((response: AxiosResponse<TaskList[]>) => response.data)
 }
 
+export const createTaskApi = async (postData: Task) => {
+  const idToken = await getIdToken()
+  const config = {
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  }
+  const data = {
+    task: postData,
+  }
+  return axios.post(`${apiUrl}/tasks/`, data, config).then((response: AxiosResponse<Task>) => response.data)
+}
+
 export const updateTaskApi = async (postData: Task) => {
   const idToken = await getIdToken()
   const config = {

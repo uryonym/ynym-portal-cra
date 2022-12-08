@@ -5,6 +5,7 @@ import {
   AccordionSummary,
   Box,
   Checkbox,
+  Drawer,
   List,
   ListItem,
   ListItemButton,
@@ -19,17 +20,19 @@ import {
 import { ChangeEvent, FC, SyntheticEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import BottomAppBar from '../components/BottomAppBar'
-import { getTaskLists, selectTask, Task, TaskList, updateTask } from '../features/taskSlice'
+import TaskNew from '../components/task/TaskNew'
+import { getTaskLists, selectTask, setCurrentTaskListId, Task, TaskList, updateTask } from '../features/taskSlice'
 import './TaskScreen.scss'
 
 const TaskScreen: FC = () => {
-  const { taskLists } = useAppSelector(selectTask)
+  const { taskLists, currentTaskListId } = useAppSelector(selectTask)
   const dispatch = useAppDispatch()
 
+  const [isNewOpen, setIsNewOpen] = useState<boolean>(false)
   const [tab, setTab] = useState<string>()
 
   const handleChangeTab = (e: SyntheticEvent, newValue: string) => {
-    setTab(newValue)
+    dispatch(setCurrentTaskListId(newValue))
   }
 
   const handleChangeCheck = (task: Task) => (e: ChangeEvent<HTMLInputElement>) => {
@@ -38,15 +41,13 @@ const TaskScreen: FC = () => {
   }
 
   useEffect(() => {
-    // タスク一覧の取得
+    console.log('タスク一覧の取得')
     dispatch(getTaskLists())
   }, [dispatch])
 
   useEffect(() => {
-    if (taskLists.length) {
-      setTab(taskLists[0].id)
-    }
-  }, [taskLists])
+    setTab(currentTaskListId)
+  }, [currentTaskListId])
 
   const dispTaskListTabs = taskLists.map((taskList: TaskList, index: number) => {
     return (
@@ -133,7 +134,10 @@ const TaskScreen: FC = () => {
           {dispTabPanels}
         </Stack>
       </Box>
-      <BottomAppBar />
+      <Drawer anchor='bottom' open={isNewOpen} onClose={() => setIsNewOpen(false)}>
+        <TaskNew onClose={() => setIsNewOpen(false)} />
+      </Drawer>
+      <BottomAppBar onAddItem={() => setIsNewOpen(true)} />
     </>
   )
 }
