@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { firebaseAuth } from './app/firebase'
 import { useAppDispatch, useAppSelector } from './app/hooks'
 import { login, logout, selectAuthUser } from './features/authUserSlice'
+import AuthInfoScreen from './screens/AuthInfoScreen'
 import HomeScreen from './screens/HomeScreen'
 import LoadingScreen from './screens/LoadingScreen'
 import LoginScreen from './screens/LoginScreen'
@@ -22,6 +23,10 @@ const App: FC = () => {
     {
       path: 'task',
       element: <TaskScreen />,
+    },
+    {
+      path: 'auth_info',
+      element: <AuthInfoScreen />,
     },
   ])
 

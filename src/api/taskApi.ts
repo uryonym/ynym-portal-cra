@@ -1,32 +1,14 @@
 import axios, { AxiosResponse } from 'axios'
-import { firebaseAuth } from '../app/firebase'
 import { Task, TaskList } from '../features/taskSlice'
-
-const apiUrl =
-  process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_URL_PRO : process.env.REACT_APP_API_URL_DEV
-
-const getIdToken = () =>
-  firebaseAuth.currentUser?.getIdToken(true).then((idToken) => {
-    return idToken
-  })
+import { apiUrl, getApiConfig } from './common'
 
 export const getTaskListsApi = async () => {
-  const idToken = await getIdToken()
-  const config = {
-    headers: {
-      Authorization: `Bearer ${idToken}`,
-    },
-  }
+  const config = await getApiConfig()
   return axios.get(`${apiUrl}/task_lists`, config).then((response: AxiosResponse<TaskList[]>) => response.data)
 }
 
 export const createTaskApi = async (postData: Task) => {
-  const idToken = await getIdToken()
-  const config = {
-    headers: {
-      Authorization: `Bearer ${idToken}`,
-    },
-  }
+  const config = await getApiConfig()
   const data = {
     task: postData,
   }
@@ -34,12 +16,7 @@ export const createTaskApi = async (postData: Task) => {
 }
 
 export const updateTaskApi = async (postData: Task) => {
-  const idToken = await getIdToken()
-  const config = {
-    headers: {
-      Authorization: `Bearer ${idToken}`,
-    },
-  }
+  const config = await getApiConfig()
   const data = {
     task: postData,
   }
@@ -49,11 +26,6 @@ export const updateTaskApi = async (postData: Task) => {
 }
 
 export const deleteTaskApi = async (taskId: string) => {
-  const idToken = await getIdToken()
-  const config = {
-    headers: {
-      Authorization: `Bearer ${idToken}`,
-    },
-  }
+  const config = await getApiConfig()
   return axios.delete(`${apiUrl}/tasks/${taskId}`, config)
 }

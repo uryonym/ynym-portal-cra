@@ -51,8 +51,8 @@ const MenuButton: FC = () => {
               </ListItemButton>
             </ListItem>
             <ListItem>
-              <ListItemButton>
-                <ListItemText primary='パスワード情報' />
+              <ListItemButton component={Link} to='/auth_info'>
+                <ListItemText primary='認証情報' />
               </ListItemButton>
             </ListItem>
           </List>

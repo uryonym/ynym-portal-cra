@@ -113,11 +113,13 @@ export const taskSlice = createSlice({
     builder.addCase(getTaskLists.fulfilled, (state, action) => {
       state.taskLists = action.payload
       state.currentTaskListId = action.payload[0].id
+      state.currentTask = undefined
       state.status = 'idle'
     })
     builder.addCase(getTaskLists.rejected, (state, action) => {
       state.taskLists = []
       state.currentTaskListId = undefined
+      state.currentTask = undefined
       state.status = 'failed'
       console.log(action.error)
     })
