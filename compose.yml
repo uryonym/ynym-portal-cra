@@ -7,7 +7,7 @@ services:
     restart: always
     volumes:
       - ./nginx:/etc/nginx/conf.d
-    network:
+    networks:
       - default
       - proxy-network
 
