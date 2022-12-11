@@ -3,7 +3,7 @@ FROM node:lts AS builder
 WORKDIR /app
 
 COPY package.json ./
-COPY package.lock.json ./
+COPY package-lock.json ./
 COPY tsconfig.json ./
 RUN npm install
 
