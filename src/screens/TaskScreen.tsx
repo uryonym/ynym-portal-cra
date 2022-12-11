@@ -21,6 +21,7 @@ import { ChangeEvent, FC, SyntheticEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import BottomAppBar from '../components/BottomAppBar'
 import TaskDetail from '../components/task/TaskDetail'
+import TaskListItem from '../components/task/TaskListItem'
 import TaskNew from '../components/task/TaskNew'
 import {
   getTaskLists,
@@ -80,16 +81,14 @@ const TaskScreen: FC = () => {
     tasks
       .filter((x) => !x.is_complete)
       .map((task: Task, index: number, array: Task[]) => {
-        const dispDeadLine = task.dead_line ? task.dead_line.toString() : ''
+        const isDivider = array.length - 1 !== index
         return (
-          <ListItem divider={array.length - 1 !== index} disablePadding key={index}>
-            <ListItemButton dense>
-              <ListItemIcon>
-                <Checkbox checked={task.is_complete} disableRipple onChange={handleChangeCheck(task)} />
-              </ListItemIcon>
-              <ListItemText primary={task.title} secondary={dispDeadLine} onClick={handleClickTask(task)} />
-            </ListItemButton>
-          </ListItem>
+          <TaskListItem
+            isDivider={isDivider}
+            task={task}
+            onClick={handleClickTask(task)}
+            onChange={handleChangeCheck(task)}
+          />
         )
       })
 
@@ -97,21 +96,14 @@ const TaskScreen: FC = () => {
     tasks
       .filter((x) => x.is_complete)
       .map((task: Task, index, array) => {
-        const dispDeadLine = task.dead_line ? task.dead_line.toString() : ''
+        const isDivider = array.length - 1 !== index
         return (
-          <ListItem divider={array.length - 1 !== index} disablePadding key={task.id}>
-            <ListItemButton dense>
-              <ListItemIcon>
-                <Checkbox checked={task.is_complete} disableRipple onChange={handleChangeCheck(task)} />
-              </ListItemIcon>
-              <ListItemText
-                primary={task.title}
-                secondary={dispDeadLine}
-                onClick={handleClickTask(task)}
-                sx={{ textDecoration: 'line-through' }}
-              />
-            </ListItemButton>
-          </ListItem>
+          <TaskListItem
+            isDivider={isDivider}
+            task={task}
+            onClick={handleClickTask(task)}
+            onChange={handleChangeCheck(task)}
+          />
         )
       })
 
@@ -148,10 +140,14 @@ const TaskScreen: FC = () => {
       <Box className='task-main'>
         <Stack>
           <Typography variant='h4'>タスク</Typography>
-          <Tabs value={tab} variant='scrollable' onChange={handleChangeTab}>
-            {dispTaskListTabs}
-          </Tabs>
-          {dispTabPanels}
+          {tab && (
+            <>
+              <Tabs value={tab} variant='scrollable' onChange={handleChangeTab}>
+                {dispTaskListTabs}
+              </Tabs>
+              {dispTabPanels}
+            </>
+          )}
         </Stack>
       </Box>
       <Drawer anchor='bottom' open={isNewOpen} onClose={() => setIsNewOpen(false)}>
