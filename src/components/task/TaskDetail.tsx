@@ -83,8 +83,9 @@ const TaskDetail: FC<TaskDetailProps> = ({ onClose }) => {
 
   return (
     <>
-      <div>
+      <Box className='task-detail-main'>
         <TextField
+          className='task-detail-form'
           multiline
           fullWidth
           placeholder='タスクを入力'
@@ -101,6 +102,7 @@ const TaskDetail: FC<TaskDetailProps> = ({ onClose }) => {
             renderInput={(params) => (
               <TextField
                 {...params}
+                className='task-detail-form'
                 fullWidth
                 variant='standard'
                 placeholder='期限を入力'
@@ -117,6 +119,7 @@ const TaskDetail: FC<TaskDetailProps> = ({ onClose }) => {
         </LocalizationProvider>
 
         <TextField
+          className='task-detail-form'
           multiline
           fullWidth
           placeholder='詳細を入力'
@@ -140,8 +143,8 @@ const TaskDetail: FC<TaskDetailProps> = ({ onClose }) => {
           </Button>
           <DeleteConfirmDialog open={isOpen} onExec={handleDelete} onClose={handleCloseDialog} />
         </Stack>
-      </div>
-      <AppBar position='fixed'>
+      </Box>
+      <AppBar className='task-detail-appbar' position='fixed'>
         <Toolbar>
           <IconButton color='inherit' onClick={onClose}>
             <ArrowBackIcon />

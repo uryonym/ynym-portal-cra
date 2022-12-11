@@ -42,17 +42,17 @@ const MenuButton: FC = () => {
           <List>
             <ListItem>
               <ListItemButton component={Link} to='/'>
-                <ListItemText primary='Home' />
+                <ListItemText primary='ホーム' />
               </ListItemButton>
             </ListItem>
             <ListItem>
-              <ListItemButton component={Link} to='task'>
-                <ListItemText primary='Task' />
+              <ListItemButton component={Link} to='/task'>
+                <ListItemText primary='タスク' />
               </ListItemButton>
             </ListItem>
             <ListItem>
               <ListItemButton>
-                <ListItemText primary='Authenticate' />
+                <ListItemText primary='パスワード情報' />
               </ListItemButton>
             </ListItem>
           </List>
@@ -60,7 +60,7 @@ const MenuButton: FC = () => {
           <List>
             <ListItem>
               <ListItemButton onClick={handleClickSignOut}>
-                <ListItemText primary='LogOut' />
+                <ListItemText primary='サインアウト' />
               </ListItemButton>
             </ListItem>
           </List>

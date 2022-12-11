@@ -44,8 +44,9 @@ const TaskNew: FC<TaskNewProps> = ({ onClose }) => {
 
   return (
     <>
-      <div>
+      <Box className='task-new-main'>
         <TextField
+          className='task-new-form'
           multiline
           fullWidth
           placeholder='タスクを入力'
@@ -63,6 +64,7 @@ const TaskNew: FC<TaskNewProps> = ({ onClose }) => {
             renderInput={(params) => (
               <TextField
                 {...params}
+                className='task-new-form'
                 fullWidth
                 variant='standard'
                 placeholder='期限を入力'
@@ -77,7 +79,7 @@ const TaskNew: FC<TaskNewProps> = ({ onClose }) => {
             )}
           />
         </LocalizationProvider>
-      </div>
+      </Box>
       <AppBar position='static' color='inherit'>
         <Toolbar>
           <Box sx={{ flexGrow: 1 }} />

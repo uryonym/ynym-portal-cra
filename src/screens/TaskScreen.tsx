@@ -147,7 +147,7 @@ const TaskScreen: FC = () => {
     <>
       <Box className='task-main'>
         <Stack>
-          <Typography variant='h4'>Tasks</Typography>
+          <Typography variant='h4'>タスク</Typography>
           <Tabs value={tab} variant='scrollable' onChange={handleChangeTab}>
             {dispTaskListTabs}
           </Tabs>
