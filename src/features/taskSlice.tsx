@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { createTaskApi, getTaskListsApi, updateTaskApi } from '../api/taskApi'
+import { createTaskApi, deleteTaskApi, getTaskListsApi, updateTaskApi } from '../api/taskApi'
 import { RootState } from '../app/store'
 
 export interface Task {
@@ -27,12 +27,14 @@ export interface TaskList {
 export interface TaskState {
   taskLists: TaskList[]
   currentTaskListId?: string
+  currentTask?: Task
   status: 'idle' | 'loading' | 'failed'
 }
 
 const initialState: TaskState = {
   taskLists: [],
   currentTaskListId: undefined,
+  currentTask: undefined,
   status: 'idle',
 }
 
@@ -78,12 +80,30 @@ export const updateTask = createAsyncThunk<Task, Task, { rejectValue: string }>(
   }
 )
 
+export const deleteTask = createAsyncThunk<string, string, { rejectValue: string }>(
+  'task/deleteTask',
+  async (taskId, { rejectWithValue }) => {
+    try {
+      await deleteTaskApi(taskId)
+      return taskId
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message)
+      }
+      return ''
+    }
+  }
+)
+
 export const taskSlice = createSlice({
   name: 'task',
   initialState,
   reducers: {
     setCurrentTaskListId: (state, action: PayloadAction<string>) => {
       state.currentTaskListId = action.payload
+    },
+    setCurrentTask: (state, action: PayloadAction<Task | undefined>) => {
+      state.currentTask = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -134,10 +154,26 @@ export const taskSlice = createSlice({
       state.status = 'failed'
       console.log(action.error)
     })
+
+    builder.addCase(deleteTask.pending, (state) => {
+      state.status = 'loading'
+    })
+    builder.addCase(deleteTask.fulfilled, (state, action) => {
+      const updateTaskLists = state.taskLists.slice(0, state.taskLists.length)
+      const taskListIndex = updateTaskLists.findIndex((x) => x.id === state.currentTaskListId)
+      const tasks = updateTaskLists[taskListIndex].tasks.filter((x) => x.id !== action.payload)
+      updateTaskLists[taskListIndex].tasks = tasks
+      state.taskLists = updateTaskLists
+      state.status = 'idle'
+    })
+    builder.addCase(deleteTask.rejected, (state, action) => {
+      state.status = 'failed'
+      console.log(action.error)
+    })
   },
 })
 
-export const { setCurrentTaskListId } = taskSlice.actions
+export const { setCurrentTaskListId, setCurrentTask } = taskSlice.actions
 
 export const selectTask = (state: RootState) => state.task
 

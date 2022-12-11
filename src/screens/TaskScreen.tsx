@@ -20,8 +20,17 @@ import {
 import { ChangeEvent, FC, SyntheticEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import BottomAppBar from '../components/BottomAppBar'
+import TaskDetail from '../components/task/TaskDetail'
 import TaskNew from '../components/task/TaskNew'
-import { getTaskLists, selectTask, setCurrentTaskListId, Task, TaskList, updateTask } from '../features/taskSlice'
+import {
+  getTaskLists,
+  selectTask,
+  setCurrentTask,
+  setCurrentTaskListId,
+  Task,
+  TaskList,
+  updateTask,
+} from '../features/taskSlice'
 import './TaskScreen.scss'
 
 const TaskScreen: FC = () => {
@@ -29,6 +38,7 @@ const TaskScreen: FC = () => {
   const dispatch = useAppDispatch()
 
   const [isNewOpen, setIsNewOpen] = useState<boolean>(false)
+  const [isDetailOpen, setIsDetailOpen] = useState<boolean>(false)
   const [tab, setTab] = useState<string>()
 
   const handleChangeTab = (e: SyntheticEvent, newValue: string) => {
@@ -38,6 +48,11 @@ const TaskScreen: FC = () => {
   const handleChangeCheck = (task: Task) => (e: ChangeEvent<HTMLInputElement>) => {
     const data = { ...task, is_complete: e.target.checked }
     dispatch(updateTask(data))
+  }
+
+  const handleClickTask = (task: Task) => () => {
+    dispatch(setCurrentTask(task))
+    setIsDetailOpen(true)
   }
 
   useEffect(() => {
@@ -72,7 +87,7 @@ const TaskScreen: FC = () => {
               <ListItemIcon>
                 <Checkbox checked={task.is_complete} disableRipple onChange={handleChangeCheck(task)} />
               </ListItemIcon>
-              <ListItemText primary={task.title} secondary={dispDeadLine} />
+              <ListItemText primary={task.title} secondary={dispDeadLine} onClick={handleClickTask(task)} />
             </ListItemButton>
           </ListItem>
         )
@@ -89,7 +104,12 @@ const TaskScreen: FC = () => {
               <ListItemIcon>
                 <Checkbox checked={task.is_complete} disableRipple onChange={handleChangeCheck(task)} />
               </ListItemIcon>
-              <ListItemText primary={task.title} secondary={dispDeadLine} sx={{ textDecoration: 'line-through' }} />
+              <ListItemText
+                primary={task.title}
+                secondary={dispDeadLine}
+                onClick={handleClickTask(task)}
+                sx={{ textDecoration: 'line-through' }}
+              />
             </ListItemButton>
           </ListItem>
         )
@@ -127,7 +147,7 @@ const TaskScreen: FC = () => {
     <>
       <Box className='task-main'>
         <Stack>
-          <Typography variant='h4'>tasks</Typography>
+          <Typography variant='h4'>Tasks</Typography>
           <Tabs value={tab} variant='scrollable' onChange={handleChangeTab}>
             {dispTaskListTabs}
           </Tabs>
@@ -136,6 +156,9 @@ const TaskScreen: FC = () => {
       </Box>
       <Drawer anchor='bottom' open={isNewOpen} onClose={() => setIsNewOpen(false)}>
         <TaskNew onClose={() => setIsNewOpen(false)} />
+      </Drawer>
+      <Drawer anchor='right' open={isDetailOpen} onClose={() => setIsDetailOpen(false)}>
+        <TaskDetail onClose={() => setIsDetailOpen(false)} />
       </Drawer>
       <BottomAppBar onAddItem={() => setIsNewOpen(true)} />
     </>

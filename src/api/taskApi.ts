@@ -47,3 +47,13 @@ export const updateTaskApi = async (postData: Task) => {
     .patch(`${apiUrl}/tasks/${postData.id}`, data, config)
     .then((response: AxiosResponse<Task>) => response.data)
 }
+
+export const deleteTaskApi = async (taskId: string) => {
+  const idToken = await getIdToken()
+  const config = {
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  }
+  return axios.delete(`${apiUrl}/tasks/${taskId}`, config)
+}

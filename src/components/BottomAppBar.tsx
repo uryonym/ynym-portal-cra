@@ -75,9 +75,11 @@ const BottomAppBar: FC<BottomAppBarProps> = ({ onAddItem }) => {
     <AppBar className='bottom-app-bar' position='fixed'>
       <Toolbar>
         <MenuButton />
-        <Fab className='add-fab' color='secondary' onClick={onAddItem}>
-          <Add />
-        </Fab>
+        {onAddItem && (
+          <Fab className='add-fab' color='secondary' onClick={onAddItem}>
+            <Add />
+          </Fab>
+        )}
         <SpaceBox />
       </Toolbar>
     </AppBar>
