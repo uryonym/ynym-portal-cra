@@ -13,6 +13,7 @@ import {
   Typography,
 } from '@mui/material'
 import { ChangeEvent, FC, SyntheticEvent, useEffect, useState } from 'react'
+import SwipeableViews from 'react-swipeable-views-react-18-fix'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import BottomAppBar from '../components/BottomAppBar'
 import TaskDetail from '../components/task/TaskDetail'
@@ -35,10 +36,16 @@ const TaskScreen: FC = () => {
 
   const [isNewOpen, setIsNewOpen] = useState<boolean>(false)
   const [isDetailOpen, setIsDetailOpen] = useState<boolean>(false)
-  const [tab, setTab] = useState<string>()
+  const [tabIndex, setTabIndex] = useState<number>()
 
   const handleChangeTab = (e: SyntheticEvent, newValue: string) => {
+    setTabIndex(taskLists.findIndex((x) => x.id === newValue))
     dispatch(setCurrentTaskListId(newValue))
+  }
+
+  const handleChangeTabIndex = (index: number) => {
+    setTabIndex(index)
+    dispatch(setCurrentTaskListId(taskLists[index].id))
   }
 
   const handleChangeCheck = (task: Task) => (e: ChangeEvent<HTMLInputElement>) => {
@@ -55,10 +62,6 @@ const TaskScreen: FC = () => {
     console.log('タスク一覧の取得')
     dispatch(getTaskLists())
   }, [dispatch])
-
-  useEffect(() => {
-    setTab(currentTaskListId)
-  }, [currentTaskListId])
 
   const dispTaskListTabs = taskLists.map((taskList: TaskList, index: number) => {
     return (
@@ -81,6 +84,7 @@ const TaskScreen: FC = () => {
           <TaskListItem
             isDivider={isDivider}
             task={task}
+            key={index}
             onClick={handleClickTask(task)}
             onChange={handleChangeCheck(task)}
           />
@@ -96,6 +100,7 @@ const TaskScreen: FC = () => {
           <TaskListItem
             isDivider={isDivider}
             task={task}
+            key={index}
             onClick={handleClickTask(task)}
             onChange={handleChangeCheck(task)}
           />
@@ -106,12 +111,12 @@ const TaskScreen: FC = () => {
     return (
       <div
         role='tabpanel'
-        hidden={tab !== taskList.id}
+        hidden={currentTaskListId !== taskList.id}
         key={index}
         id={`tabpanel-${index}`}
         aria-labelledby={`tab-${index}`}
       >
-        {tab === taskList.id && (
+        {currentTaskListId === taskList.id && (
           <Box>
             <Paper variant='outlined'>
               <List>{dispTasks(taskList.tasks)}</List>
@@ -135,12 +140,14 @@ const TaskScreen: FC = () => {
       <Box className='task-main'>
         <Stack>
           <Typography variant='h4'>タスク</Typography>
-          {tab && (
+          {currentTaskListId && (
             <>
-              <Tabs value={tab} variant='scrollable' onChange={handleChangeTab}>
+              <Tabs value={currentTaskListId} variant='scrollable' onChange={handleChangeTab}>
                 {dispTaskListTabs}
               </Tabs>
-              {dispTabPanels}
+              <SwipeableViews index={tabIndex} onChangeIndex={handleChangeTabIndex}>
+                {dispTabPanels}
+              </SwipeableViews>
             </>
           )}
         </Stack>

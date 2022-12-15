@@ -14,7 +14,7 @@ const TaskListItem: FC<TaskListItemProps> = ({ isDivider, task, onClick, onChang
   const dispDeadLine = task.dead_line ? task.dead_line.toString() : ''
 
   return (
-    <ListItem divider={isDivider} disablePadding key={task.id}>
+    <ListItem divider={isDivider} disablePadding>
       <ListItemButton dense>
         <ListItemIcon>
           <Checkbox checked={task.is_complete} disableRipple onChange={onChange} />
