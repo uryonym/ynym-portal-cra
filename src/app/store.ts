@@ -1,6 +1,7 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 import authInfoReducer from '../features/authInfoSlice'
 import authUserReducer from '../features/authUserSlice'
+import carReducer from '../features/carSlice'
 import taskReducer from '../features/taskSlice'
 
 export const store = configureStore({
@@ -8,6 +9,7 @@ export const store = configureStore({
     authUser: authUserReducer,
     task: taskReducer,
     authInfo: authInfoReducer,
+    car: carReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
